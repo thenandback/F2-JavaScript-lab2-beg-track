@@ -19,6 +19,7 @@ To run this file (in the terminal) use: node lab2.js */
 
 // We're going to use this special assert method again to
 // test our code
+
 function assert(expression, failureMessage) {
   if (!expression) {
     console.log('assertion failure: ', failureMessage);
@@ -44,14 +45,26 @@ function assert(expression, failureMessage) {
     fourth hour     |    4/hour        |        4         |
 
  TODO: First, make a constructor function, called Blob, that makes blobs.
+*/
 
- TODO: Next, create an instance of Blob named blob.
+function Blob(pop) {
+  this.pop = pop;
+}
+  // TODO: Next, create an instance of Blob named blob.
 
- TODO: Then, use a loop to calculate how long it took the blob to finish
+var blob = new Blob(1000);
+
+ /* TODO: Then, use a loop to calculate how long it took the blob to finish
  with Dowington. */
 
+var nom = 0;
 
-var hoursSpentInDowington; // TODO: assign me the value of the
+for (var i = 1; blob.pop > 0; i++) {
+  blob.pop = blob.pop - i;
+  nom++;
+}
+
+var hoursSpentInDowington = nom; // TODO: assign me the value of the
                            // above calculation (how long it took
                            // the blob to eat Dowington)
 
@@ -59,15 +72,21 @@ var hoursSpentInDowington; // TODO: assign me the value of the
 // town, and the starting consumption rate, and returns the number
 // of hours the blob needs to ooze its way through that town.
 
-function hoursToOoze(population, peoplePerHour) {
+Blob.prototype.hoursToOoze = function(population, peoplePerHour) {
   // TODO: implement me based on the instructions above.
   // Be sure to then assign me to the Blob's prototype.
-}
+  var hour = 0;
 
+  for (peoplePerHour; population > 0; peoplePerHour++) {
+    population = population - peoplePerHour;
+    hour++;
+  }
+
+  return hour;
+};
 assert(blob.hoursToOoze(0, 1) === 0, 'no people means no time needed.');
 assert(blob.hoursToOoze(1000, 1) === hoursSpentInDowington,
   'hoursSpentInDowington should match hoursToOoze\'s result for 1000');
-
 // TODO: write three more assertions like the two above, testing out
 // the hoursToOoze method.
 
@@ -86,27 +105,31 @@ var hello = {
 // speak, and method (that you'll place on the prototype) called
 // sayHello.
 
-function SentientBeing () {
+function SentientBeing(home, lang) {
   // TODO: specify a home planet and a language
   // you'll need to add parameters to this constructor
+  this.home = home;
+  this.lang = lang;
 }
 
 // sb is a SentientBeing object
-function sayHello (sb) {
+SentientBeing.prototype.sayHello = function(sb) {
     // TODO: say hello prints out (console.log's) hello in the
     // language of the speaker, but returns it in the language
     // of the listener (the sb parameter above).
     // use the 'hello' object at the beginning of this exercise
     // to do the translating
 
+    return hello[sb.lang];
+
     //TODO: put this on the SentientBeing prototype
-  }
+  };
 
 // TODO: create three SentientBeings, one for each language in the
 // 'hello' object above.
-var klingon = new SentientBeing(); // TODO: make a klingon
-var romulan = new SentientBeing(); // TODO: make a romulan
-var human = new SentientBeing(); // TODO: make a human
+var klingon = new SentientBeing('Seattle', 'klingon'); // TODO: make a klingon
+var romulan = new SentientBeing('Portland', 'romulan'); // TODO: make a romulan
+var human = new SentientBeing('Vancouver', 'federation standard'); // TODO: make a human
 
 assert(human.sayHello(klingon) === 'nuqneH',
   'the klingon should hear nuqneH');
@@ -114,18 +137,45 @@ assert(human.sayHello(klingon) === 'nuqneH',
 // TODO: write five more assertions, to complete all the possible
 // greetings between the three types of sentient beings you created above.
 
+assert(human.sayHello(romulan) === 'Jolan\'tru',
+  'the romulan should hear Jolan\'tru');
+
+assert(klingon.sayHello(romulan) === 'Jolan\'tru',
+  'the romulan should hear Jolan\'tru');
+
+assert(klingon.sayHello(human) === 'hello',
+  'the human should hear hello');
+
+assert(romulan.sayHello(klingon) === 'nuqneH',
+  'the klingon should hear nuqneH');
+
+assert(romulan.sayHello(human) === 'hello',
+  'the human should hear hello');
+
 //*********************************************************
 // PROBLEM 3: Moar Loops. 20 points.
 //
 // Implement the following functions. Write at least 3
 // assertions for each one
 //*********************************************************
+
 function max(array) {
   // TODO: return the largest number in the given array
+  var maximum = array[0]; // assumes array[0] is defined.
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] > maximum) {
+      maximum = array[i];
+    }
+  }
+
+  return maximum;
 }
 
 // TODO: write three more assertions
-assert(max([ 1, 3, 2 ]) === 3, '[1,3,2]');
+assert(max([1, 3, 2]) === 3, '[1,3,2]');
+assert(max([-4]) === -4, '[-4]');
+assert(max([-4, 1]) === 1, '[-4, 1]');
+assert(max([0, -1]) === 0, '[0, -1]');
 
 function variablify(string) {
   // TODO: you are given a string with several words in it
@@ -135,12 +185,43 @@ function variablify(string) {
   // you might want to use these string methods:
   //  split(), charAt(), toUpperCase()
   // and this array method: join()
+
+  string = string.trim();
+  var stringList = string.split(' ');
+  stringList[0] = stringList[0].toLowerCase();
+
+  for (var i = 1; i < stringList.length; i++) {
+    stringList[i] = stringList[i].toLowerCase();
+    var temp = stringList[i].charAt(0);
+    temp = temp.toUpperCase();
+
+    for (var j = 1; j < stringList[i].length; j++) {
+      temp += stringList[i].charAt(j);
+    }
+
+    stringList[i] = temp;
+    // the nested for Loop is ugly, but for some reason the below code crashes
+    // stringList[i].charAt(0) = stringList[i].charAt(0).toUpperCase();
+  }
+
+  return stringList.join('');
+
 }
 
 // TODO: write three more assertions
+
+console.log(variablify('one two three'));
 assert(variablify('one two three') === 'oneTwoThree',
   'variablify(\'one two three\')');
 
+assert(variablify('a b') === 'aB',
+  'variablify(\'a b\')');
+
+assert(variablify('a') === 'a',
+  'variablify(\'a\')');
+
+assert(variablify('wHaCkY YaHoO wOW') === 'whackyYahooWow',
+  'variablify(\'wHaCkY YaHoO wOW\')');
 //*********************************************************
 // PROBLEM 4: Cleanup: 10 points
 // Makes sure this file passes jshint and jscs
